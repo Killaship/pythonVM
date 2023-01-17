@@ -7,7 +7,8 @@
 # 6 JMP
 # 7 JEZ (Jump if Equal to zero)
 # 8 JNZ (Jump if Not equal to Zero)
-from time import sleep
+# More will probably be added.
+from time import sleep # For debug options, custom VM speed. Not required.
 
 # programs
 
@@ -32,10 +33,10 @@ running = True
 program = [6, 4, 0, 1, 2, 12, 4, 3, 5, 8, 6, 7, 3, 2, 69, 1]
 
 # debug options
-debug = True
-vmspeed = 0.1
+debug = True  # Turning this off disables the custom speed and variable printouts. Goes as fast as possible.
+vmspeed = 0.1 # This is the length of time (seconds) it takes for 1 cycle.
 
-def fetch(location):
+def fetch(location): # Returns the value of memory pointed to by [location]
   return program[location]
 
 def jumpto(location):
@@ -47,7 +48,8 @@ def jumpto(location):
   # The VM does it for you so it's less complicated.
   # TL;DR, don't touch it, it's magic!
 
-def eval(instruction):
+def eval(instruction): # Evaluates instructions in a crappy elif chain.
+  # This is Python 3.8. Why did they wait till 3.10 for switch/case?
   global ip, running, debug, a, vmspeed
   if(instruction == 0): # NOP
     if(debug == True):
@@ -102,15 +104,16 @@ def eval(instruction):
       ip += 1
       if(debug == True):
         print("(did not jump)")
-  else:
-    running = False
-    print("invalid instruction at " + str(ip))
+  else: # If no other instruction matches, give an error.
+    raise ValueError("\n\nIllegal instruction at program address " + str(ip) + ". Accumulator value was " + str(a) + ". Instruction value was " + str(fetch(ip)) + ".") # Throw error!
+    running = False # Not needed, here for redundancy.
+    print("invalid instruction at " + str(ip)) # Also redundant.
 def main():
   global ip, running
   running == True
   while(running == True):
     eval(fetch(ip))
     ip += 1
-    if(debug == True):
+    if(debug == True): # delay the proper amount of time in debug mode.
       sleep(vmspeed)
 main()
